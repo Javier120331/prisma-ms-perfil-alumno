@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  id              String   @id @default(uuid())
+  userId          String
+  colegioId       String?  @map("colegio_id")
+  nombreCompleto  String
+  fechaNacimiento DateTime
+  cursoActual     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  paciProfiles    PaciProfile[]
+
+  @@index([colegioId])
+  @@index([userId])
+}
+
+model PaciProfile {
+  id                 String   @id @default(uuid())
+  studentId          String
+  userId             String
+  diagnostico        String
+  fechaElaboracion   DateTime
+  fechaRevision      DateTime
+  duracion           String
+  validFrom          DateTime
+  validUntil         DateTime
+  datosEstructurales Json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  student            Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}

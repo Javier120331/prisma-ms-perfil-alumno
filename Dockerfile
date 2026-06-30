@@ -45,4 +45,4 @@ USER node
 
 EXPOSE 3005
 
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/main"]

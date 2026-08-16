@@ -13,9 +13,13 @@ const serviceMock = {
 
 describe('StudentController', () => {
   let controller: StudentController;
+<<<<<<< HEAD
   // SUPERADMIN → resolveColegioId devuelve null (acceso cross-colegio), por lo que
   // las aserciones de delegación con colegioId=null siguen siendo válidas.
   const req = { user: { id: 'user-id', role: 'SUPERADMIN', colegioId: null } } as any;
+=======
+  const req = { user: { id: 'user-id', colegioId: null } } as any;
+>>>>>>> a54ef66f568ee18d5f8b3d8ea5ff4206febb2a27
 
   beforeEach(() => {
     controller = new StudentController(serviceMock);

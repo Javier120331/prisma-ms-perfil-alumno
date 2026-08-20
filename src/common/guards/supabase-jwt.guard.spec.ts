@@ -1,20 +1,27 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { jwtVerify } from 'jose';
-import { SupabaseJwtGuard } from './supabase-jwt.guard';
+import { CognitoJwtGuard } from './supabase-jwt.guard';
 
 jest.mock('jose', () => ({
   createRemoteJWKSet: jest.fn().mockReturnValue({}),
   jwtVerify: jest.fn(),
 }));
 
-describe('SupabaseJwtGuard', () => {
-  let guard: SupabaseJwtGuard;
+describe('CognitoJwtGuard', () => {
+  let guard: CognitoJwtGuard;
   const verifyMock = jwtVerify as jest.MockedFunction<typeof jwtVerify>;
 
   const createConfigService = () =>
     ({
-      getOrThrow: jest.fn().mockReturnValue('https://test.supabase.co'),
+      get: jest.fn().mockImplementation((key: string) => {
+        if (key === 'COGNITO_REGION') return 'us-east-1';
+        return undefined;
+      }),
+      getOrThrow: jest.fn().mockImplementation((key: string) => {
+        if (key === 'COGNITO_USER_POOL_ID') return 'us-east-1_XXXXXXXXX';
+        throw new Error(`Missing config: ${key}`);
+      }),
     }) as unknown as ConfigService;
 
   const createContext = (headers: Record<string, string | undefined>) => {
@@ -29,7 +36,7 @@ describe('SupabaseJwtGuard', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    guard = new SupabaseJwtGuard(createConfigService());
+    guard = new CognitoJwtGuard(createConfigService());
   });
 
   it('rejects when header is missing', async () => {
@@ -45,14 +52,16 @@ describe('SupabaseJwtGuard', () => {
 
   it('accepts valid token and attaches user', async () => {
     verifyMock.mockResolvedValue({
-      payload: { sub: 'u1', email: 'test@test.com', role: 'authenticated' },
+      payload: { sub: 'u1', email: 'test@test.com', custom: { role: 'ADMIN', colegioId: 'colegio-1' } },
     } as any);
     const { context, request } = createContext({ authorization: 'Bearer ok' });
     await expect(guard.canActivate(context)).resolves.toBe(true);
-<<<<<<< HEAD
-    expect(request.user).toEqual({ id: 'u1', email: 'test@test.com', role: 'authenticated', appRole: undefined, colegioId: null });
-=======
-    expect(request.user).toEqual({ id: 'u1', email: 'test@test.com', role: 'authenticated' });
->>>>>>> a54ef66f568ee18d5f8b3d8ea5ff4206febb2a27
+    expect(request.user).toEqual({
+      id: 'u1',
+      email: 'test@test.com',
+      role: 'ADMIN',
+      appRole: 'ADMIN',
+      colegioId: 'colegio-1',
+    });
   });
 });

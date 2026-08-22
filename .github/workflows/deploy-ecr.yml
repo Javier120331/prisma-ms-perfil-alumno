@@ -1,17 +1,17 @@
 name: Build & Push to ECR
 
-# Construye la imagen Docker y la sube a Amazon ECR en cada push a main.
+# Construye la imagen Docker y la sube a Amazon ECR en cada push a cloud/aws/perfil.
 #
 # GitHub Secrets requeridos (Settings -> Secrets and variables -> Actions):
 #   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN, AWS_REGION
 
 on:
   push:
-    branches: [main]
+    branches: [cloud/aws/perfil]
   workflow_dispatch:
 
 env:
-  ECR_REPOSITORY: prisma-ms-perfil-alumno
+  ECR_REPOSITORY: api/perfil-alumno
 
 jobs:
   build-and-push:

@@ -17,7 +17,7 @@ import { Request } from 'express';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { CognitoJwtGuard } from '../../common/guards/supabase-jwt.guard';
+import { CognitoJwtGuard } from '../../common/guards/cognito-jwt.guard';
 import { resolveColegioId } from '../../common/utils/tenancy.util';
 
 type RequestWithUser = Request & {

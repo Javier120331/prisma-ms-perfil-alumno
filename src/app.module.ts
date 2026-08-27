@@ -5,10 +5,12 @@ import { AppService } from './app.service';
 import { StudentModule } from './modules/student/student.module';
 import { PaciProfileModule } from './modules/paci-profile/paci-profile.module';
 import { PrismaService } from './common/services/prisma.service';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    CommonModule,
     StudentModule,
     PaciProfileModule,
   ],

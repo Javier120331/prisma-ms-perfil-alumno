@@ -10,6 +10,7 @@ jest.mock('@nestjs/core', () => ({
 describe('bootstrap', () => {
   it('configures app with cors, validation, and listener', async () => {
     const app = {
+      use: jest.fn(),
       enableCors: jest.fn(),
       useGlobalPipes: jest.fn(),
       listen: jest.fn().mockResolvedValue(undefined),

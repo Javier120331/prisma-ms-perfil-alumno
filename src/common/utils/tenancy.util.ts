@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, HttpStatus } from '@nestjs/common';
 
 export type TenancyContext = {
   id?: string;
@@ -7,6 +7,19 @@ export type TenancyContext = {
 };
 
 const SUPERADMIN_ROLES = ['SUPERADMIN'];
+
+/** Código de error para que el front muestre un mensaje amable en vez de un 403 crudo. */
+export const NO_COLEGIO_ASSIGNED = 'NO_COLEGIO_ASSIGNED';
+
+function noColegioError(): ForbiddenException {
+  return new ForbiddenException({
+    statusCode: HttpStatus.FORBIDDEN,
+    error: 'Forbidden',
+    code: NO_COLEGIO_ASSIGNED,
+    message:
+      'Tu cuenta todavía no está asignada a un colegio. Contacta a un administrador para que te asigne uno y así puedas gestionar estudiantes y perfiles PACI.',
+  });
+}
 
 /**
  * Resuelve el colegioId efectivo para operaciones multi-tenant.
@@ -27,9 +40,7 @@ export function resolveColegioId(user: TenancyContext | null | undefined): strin
   }
 
   if (!user.colegioId) {
-    throw new ForbiddenException(
-      'User has no colegioId in token. Contact your administrator to be assigned to a colegio.',
-    );
+    throw noColegioError();
   }
 
   return user.colegioId;
@@ -52,9 +63,7 @@ export function assertColegioAccess(
   }
 
   if (!user.colegioId) {
-    throw new ForbiddenException(
-      'User has no colegioId in token. Contact your administrator.',
-    );
+    throw noColegioError();
   }
 
   if (targetColegioId && targetColegioId !== user.colegioId) {

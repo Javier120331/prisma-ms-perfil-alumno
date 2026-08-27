@@ -2,12 +2,15 @@ import * as path from 'path';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
+import helmet from 'helmet';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(helmet({ contentSecurityPolicy: false }));
 
   const allowedOrigins =
     process.env.CORS_ORIGIN?.split(',').map((origin) => origin.trim()).filter(Boolean) ??

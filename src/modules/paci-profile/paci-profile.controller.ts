@@ -15,7 +15,7 @@ import { Request } from 'express';
 import { PaciProfileService } from './paci-profile.service';
 import { CreatePaciProfileDto } from './dto/create-paci-profile.dto';
 import { UpdatePaciProfileDto } from './dto/update-paci-profile.dto';
-import { CognitoJwtGuard } from '../../common/guards/supabase-jwt.guard';
+import { CognitoJwtGuard } from '../../common/guards/cognito-jwt.guard';
 import { resolveColegioId } from '../../common/utils/tenancy.util';
 
 type RequestWithUser = Request & {
